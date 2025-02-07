@@ -38,8 +38,7 @@ pipeline {
             steps {
                 // Utilisation des identifiants Docker
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-connector', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                    sh "docker push ${backendImage}"
+                    sh 'echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin'
                     sh "docker push ${frontendImage}"
                 }
             }
