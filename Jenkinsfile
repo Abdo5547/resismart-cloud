@@ -29,7 +29,7 @@ pipeline {
         // Étape 4 : Construire les images Docker
         stage('Build Docker Images') {
             steps {
-                sh "docker build -t ${frontendImage} -f frontend/Dockerfile ."
+                sh "docker build -t ${frontendImage} -f frontend/Dockerfile frontend/"
             }
         }
 
