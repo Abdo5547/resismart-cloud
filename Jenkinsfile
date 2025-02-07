@@ -17,14 +17,14 @@ pipeline {
        
 
         // Étape 3 : Installer les dépendances et Build du frontend React
-        stage('Build Frontend') {
-            steps {
-                dir('frontend') {  // Se déplacer dans le dossier frontend
-                    sh 'npm install' 
-                    sh 'npm run build'    // Reconstruit node_modules
-                }
-            }
-        }
+       // stage('Build Frontend') {
+        //    steps {
+       //         dir('frontend') {  // Se déplacer dans le dossier frontend
+      //              sh 'npm install' 
+      //              sh 'npm run build'    // Reconstruit node_modules
+      //          }
+      //      }
+     //   }
 
         // Étape 4 : Construire les images Docker
         stage('Build Docker Images') {
