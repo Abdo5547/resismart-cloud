@@ -21,7 +21,7 @@ pipeline {
             steps {
                 dir('frontend') {  // Se déplacer dans le dossier frontend
                    sh 'npm install' 
-                    sh 'npm run build'    // Reconstruit node_modules
+            //        sh 'npm run build'    // Reconstruit node_modules
                 }
             }
         }
