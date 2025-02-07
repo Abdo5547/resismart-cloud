@@ -3,7 +3,7 @@ FROM node:18 AS build
 WORKDIR /app
 
 # Copier UNIQUEMENT les fichiers nécessaires pour npm install
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 
 # Installer les dépendances
 RUN npm install
