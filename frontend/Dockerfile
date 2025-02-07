@@ -9,8 +9,7 @@ COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 
 # Copier le reste du code source (public/, src/, etc.)
-COPY public ./public
-COPY src ./src
+COPY . .
 
 # Construire l'application React
 RUN npm run build
