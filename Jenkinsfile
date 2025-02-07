@@ -54,10 +54,19 @@ pipeline {
         // Étape 6 : Déployer sur Kubernetes
         stage('Deploy to Kubernetes') {
             steps {
-              
-                sh 'kubectl apply -f k8s/frontend/frontend.yaml'
+                withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+                    sh """
+                        sed -i "s|abdo8558/resismart:frontend|abdo8558/resismart:frontend|g" k8s/frontend/frontend.yaml
+                        kubectl apply -f k8s/frontend/frontend.yaml
+                    """
+                }
             }
         }
+    }
+
+
+
+        
     }
 
     // Actions post-build (optionnel)
