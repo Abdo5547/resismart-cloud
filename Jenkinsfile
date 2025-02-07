@@ -55,7 +55,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
               
-                sh 'kubectl apply -f frontend/frontend.yaml'
+                sh 'kubectl apply -f k8s/frontend/frontend.yaml'
             }
         }
     }
