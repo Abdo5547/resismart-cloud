@@ -38,7 +38,7 @@ pipeline {
     steps {
         withCredentials([
             usernamePassword(
-                credentialsId: 'docker-hub-credentials',
+                credentialsId: 'docker-hub-connector',
                 usernameVariable: 'DOCKER_HUB_USERNAME',  // Assurez-vous que ces noms
                 passwordVariable: 'DOCKER_HUB_PASSWORD'   // correspondent aux variables utilisées
             )
