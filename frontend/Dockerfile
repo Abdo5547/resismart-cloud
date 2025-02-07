@@ -2,16 +2,17 @@
 FROM node:18 AS build
 WORKDIR /app
 
-# Copier UNIQUEMENT les fichiers nécessaires pour npm install
+# Copier package.json et package-lock.json
 COPY frontend/package.json frontend/package-lock.json ./
 
 # Installer les dépendances
 RUN npm install
 
-# Copier TOUT le reste du frontend (public/, src/, etc.)
-COPY . .
+# Copier le reste du code source (public/, src/, etc.)
+COPY public ./public
+COPY src ./src
 
-# Build React
+# Construire l'application React
 RUN npm run build
 
 # Étape 2 : Déploiement
