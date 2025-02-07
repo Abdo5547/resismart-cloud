@@ -45,7 +45,7 @@ pipeline {
         ]) {
             sh '''
                 echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-                docker push abdo8558/resismart:frontend-${BUILD_NUMBER}
+                docker push abdo8558/resismart:frontend
             '''
         }
     }
