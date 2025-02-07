@@ -1,0 +1,42 @@
+---
+- name: Installer Docker et Kubernetes sur les nœuds
+  hosts: k8s_nodes
+  become: yes
+  tasks:
+    - name: Mettre à jour la liste des paquets
+      apt:
+        update_cache: yes
+
+    - name: Installer Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Démarrer et activer Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ajouter le dépôt Kubernetes
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+      apt_repository:
+        repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+        state: present
+
+    - name: Installer kubelet, kubeadm et kubectl
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Démarrer et activer kubelet
+      service:
+        name: kubelet
+        state: started
+        enabled: yes
