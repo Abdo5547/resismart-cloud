@@ -34,15 +34,22 @@ pipeline {
         }
 
         // Étape 5 : Push to Docker Hub
-        stage('Push to Docker Hub') {
-            steps {
-                // Utilisation des identifiants Docker
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-connector', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh 'echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin'
-                    sh "docker push ${frontendImage}"
-                }
-            }
+       stage('Push to Docker Hub') {
+    steps {
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'docker-hub-credentials',
+                usernameVariable: 'DOCKER_HUB_USERNAME',  // Assurez-vous que ces noms
+                passwordVariable: 'DOCKER_HUB_PASSWORD'   // correspondent aux variables utilisées
+            )
+        ]) {
+            sh '''
+                echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                docker push abdo8558/resismart:frontend-${BUILD_NUMBER}
+            '''
         }
+    }
+}
 
         // Étape 6 : Déployer sur Kubernetes
         stage('Deploy to Kubernetes') {
