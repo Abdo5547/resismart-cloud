@@ -16,7 +16,7 @@ pipeline {
 
        
 
-         Étape 3 : Installer les dépendances et Build du frontend React
+    //     Étape 3 : Installer les dépendances et Build du frontend React
         stage('Build Frontend') {
             steps {
                 dir('frontend') {  // Se déplacer dans le dossier frontend
