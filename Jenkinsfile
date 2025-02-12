@@ -53,15 +53,18 @@ pipeline {
 
         // Étape 6 : Déployer sur Kubernetes
         stage('Deploy to Kubernetes') {
-            steps {
-                withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
-                    sh """
-                        sed -i "s|abdo8558/resismart:frontend|abdo8558/resismart:frontend|g" k8s/frontend/frontend.yaml
-                        kubectl apply -f k8s/frontend/frontend.yaml
-                    """
-                }
-            }
+    steps {
+        withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+            sh '''
+                # Exemple : Mise à jour du tag de l'image (ajustez selon vos besoins)
+                sed -i "s|abdo8558/resismart:frontend.*|abdo8558/resismart:frontend:latest|g" k8s/frontend/frontend.yaml
+                
+                # Appliquer la configuration Kubernetes
+                kubectl apply -f k8s/frontend/frontend.yaml
+            '''
         }
+    }
+}
     
 
 
