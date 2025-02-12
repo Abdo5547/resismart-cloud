@@ -39,29 +39,30 @@ pipeline {
         withCredentials([
             usernamePassword(
                 credentialsId: 'docker-hub-connector',
-                usernameVariable: 'DOCKER_HUB_USERNAME',  // Assurez-vous que ces noms
-                passwordVariable: 'DOCKER_HUB_PASSWORD'   // correspondent aux variables utilisées
+                usernameVariable: 'DOCKER_HUB_USERNAME',
+                passwordVariable: 'DOCKER_HUB_PASSWORD'
             )
         ]) {
-            sh '''
+            sh """
                 echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-                docker push abdo8558/resismart:frontend
-            '''
+                docker push ${frontendImage}
+            """
         }
     }
 }
 
         // Étape 6 : Déployer sur Kubernetes
-        stage('Deploy to Kubernetes') {
+stage('Deploy to Kubernetes') {
     steps {
         withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
-            sh '''
-                # Exemple : Mise à jour du tag de l'image (ajustez selon vos besoins)
-                sed -i "s|abdo8558/resismart:frontend.*|abdo8558/resismart:frontend:latest|g" k8s/frontend/frontend.yaml
+            sh """
+                # Mise à jour dynamique de l'image
+                sed -i "s|abdo8558/resismart:frontend.*|${frontendImage}|g" k8s/frontend/frontend.yaml
                 
-                # Appliquer la configuration Kubernetes
-                kubectl apply -f k8s/frontend/frontend.yaml
-            '''
+                # Application avec vérification
+                kubectl apply -f k8s/frontend/frontend.yaml --namespace=resismart-prod
+                kubectl rollout status deployment/frontend -n resismart-prod --timeout=2m
+            """
         }
     }
 }
