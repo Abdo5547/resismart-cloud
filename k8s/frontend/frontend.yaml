@@ -1,12 +1,17 @@
-# Deployment pour le frontend React
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  namespace: resismart-prod
   labels:
     app: frontend
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: frontend
@@ -17,18 +22,31 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: abdo8558/resismart:frontend  # Votre image React
+          image: abdo8558/resismart:frontend-placeholder # Sera remplacé par sed
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
-          # Suppression de la variable d'environnement liée au backend
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
 ---
-# Service pour exposer le frontend
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend
+  namespace: resismart-prod
 spec:
-  type: LoadBalancer  # Pour un accès externe direct
+  type: LoadBalancer
   selector:
     app: frontend
   ports:
