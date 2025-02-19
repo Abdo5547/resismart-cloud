@@ -58,7 +58,6 @@ Exécutez les commandes suivantes :
 terraform init    # Initialisation de Terraform
 terraform plan    # Création du plan d'exécution
 terraform apply   # Application des modifications à l'infrastructure
-```
 
 ### 6. **Configuration Ansible**
 
