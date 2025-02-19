@@ -1,0 +1,36 @@
+# jenkins.yml
+- name: Install and Configure Jenkins on Master
+  hosts: master
+  become: yes
+  vars_files:
+    - credentials.yml
+
+  tasks:
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        update_cache: yes
+        state: present
+
+    - name: Start and enable Jenkins service
+      systemd:
+        name: jenkins
+        enabled: yes
+        state: started
+
+    - name: Configure Jenkins credentials
+      shell: |
+        echo "jenkins.model.Jenkins.instance.securityRealm.createAccount('{{ jenkins_admin_user }}', '{{ jenkins_admin_password }}')" | java -jar /var/lib/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080 groovy =
+      when: not jenkins_user_exists.stdout | bool
+
+    - name: Add Docker credentials to Jenkins
+      shell: |
+        echo "jenkins.model.Jenkins.instance.getDescriptor('com.cloudbees.plugins.credentials.SystemCredentialsProvider').getStore().addCredentials(jenkins.model.Jenkins.instance, new com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl(com.cloudbees.plugins.credentials.CredentialsScope.GLOBAL, 'dockerhub', 'DockerHub Credentials', '{{ dockerhub_username }}', '{{ dockerhub_password }}'))" | java -jar /var/lib/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080 groovy =
+
+    - name: Add GitHub credentials to Jenkins
+      shell: |
+        echo "jenkins.model.Jenkins.instance.getDescriptor('com.cloudbees.plugins.credentials.SystemCredentialsProvider').getStore().addCredentials(jenkins.model.Jenkins.instance, new com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl(com.cloudbees.plugins.credentials.CredentialsScope.GLOBAL, 'github', 'GitHub Credentials', '{{ github_username }}', '{{ github_password }}'))" | java -jar /var/lib/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080 groovy =
+
+    - name: Add Kubernetes kubeconfig credentials to Jenkins
+      shell: |
+        echo "jenkins.model.Jenkins.instance.getDescriptor('com.cloudbees.plugins.credentials.SystemCredentialsProvider').getStore().addCredentials(jenkins.model.Jenkins.instance, new org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl(com.cloudbees.plugins.credentials.CredentialsScope.GLOBAL, 'kubeconfig', 'Kubernetes Kubeconfig', new hudson.util.SecretBytes.fromString('{{ lookup('file', kubeconfig.path) }}')))" | java -jar /var/lib/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080 groovy =
