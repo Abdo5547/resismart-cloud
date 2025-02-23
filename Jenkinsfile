@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        frontendImage = "abdo8558/resismart:frontend-${env.BRANCH_NAME}"  // Nom de l'image frontend basé sur la branche
+        frontendImage = "abdo8558/resismart:frontend-cloud"  // Nom de l'image frontend basé sur la branche
     }
 
     stages {
