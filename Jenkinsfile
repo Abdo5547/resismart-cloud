@@ -57,13 +57,18 @@ stage('Deploy to Kubernetes') {
     steps {
         withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
             sh """
-                # Mise à jour dynamique de l'image
+                # Dynamically update image with validation
                 sed -i "s|abdo8558/resismart:frontend.*|${frontendImage}|g" k8s/frontend/frontend.yaml
                 
-                # Application avec vérification
-                kubectl create namespace resismart-cloud
-                kubectl apply -f k8s/frontend/frontend.yaml --namespace=resismart-cloud
-                kubectl rollout status deployment/frontend -n resismart-cloud --timeout=2m
+                # Idempotent namespace creation
+                kubectl create namespace resismart-cloud --dry-run=client -o yaml | kubectl apply -f -
+                
+                # Apply configuration with verification
+                kubectl apply -f k8s/frontend/frontend.yaml -n resismart-cloud
+                
+                # Verify deployment health
+                kubectl rollout status deployment/frontend -n resismart-cloud --timeout=3m
+                echo "✅ Deployment successful - ${frontendImage}"
             """
         }
     }
