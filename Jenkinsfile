@@ -62,7 +62,7 @@ stage('Deploy to Kubernetes') {
                 # Application avec vérification
                 kubectl create namespace resismart-prod
                 kubectl apply -f k8s/frontend/frontend.yaml --namespace=resismart-prod
-                kubectl rollout status deployment/frontend -n resismart-prod --timeout=2m
+                kubectl rollout status deployment/frontend -n resismart-cloud --timeout=2m
             """
         }
     }
