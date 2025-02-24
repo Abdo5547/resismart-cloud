@@ -60,8 +60,8 @@ stage('Deploy to Kubernetes') {
                 sed -i "s|abdo8558/resismart:frontend.*|${frontendImage}|g" k8s/frontend/frontend.yaml
                 
                 # Application avec vérification
-                kubectl create namespace resismart-prod
-                kubectl apply -f k8s/frontend/frontend.yaml --namespace=resismart-prod
+                kubectl create namespace resismart-cloud
+                kubectl apply -f k8s/frontend/frontend.yaml --namespace=resismart-cloud
                 kubectl rollout status deployment/frontend -n resismart-cloud --timeout=2m
             """
         }
